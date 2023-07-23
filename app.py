@@ -42,9 +42,21 @@ def ecg_check(remark):
         return 'Refused'
     else:
         return 'Normal'
-    
-def analyze(dbf_path):
-    df = Dbf5(dbf_path).to_dataframe()
+
+def convert_bytes_to_df(bytes_data):
+    # Write bytes to a .dbf file
+    with open('temp.dbf', 'wb') as file:
+        file.write(bytes_data)
+
+    # Convert .dbf file to DataFrame
+    dbf = Dbf5('temp.dbf')
+    df = dbf.to_dataframe()
+
+    return df
+
+def analyze(bytes_data):
+    # df = Dbf5(dbf_path).to_dataframe()
+    df = convert_bytes_to_df(bytes_data)
     report = {}
     report['site'] = df['HTH_CENTRE'][0]
     report['total_screened'] = len(df)
@@ -63,10 +75,15 @@ def analyze(dbf_path):
 
 
 
-
 if __name__ == "__main__":
     st.header('Magic Data Analyzer')
-    uploaded_file = st.file_uploader("Choose a file")
-
-    if uploaded_file is not None:
-        report = analyze(uploaded_file)
+    uploaded_files = st.file_uploader("Choose a file", accept_multiple_files=True)
+    
+    for files in uploaded_files:
+        bytes_data = files.getvalue()
+        df = convert_bytes_to_df(bytes_data)
+        st.dataframe(df)
+        
+        st.write('-----')
+        
+        # report = analyze(bytes_data)
