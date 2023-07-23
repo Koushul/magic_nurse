@@ -68,4 +68,5 @@ if __name__ == "__main__":
     st.header('Magic Data Analyzer')
     uploaded_file = st.file_uploader("Choose a file")
 
-    report = analyze(uploaded_file)
+    if uploaded_file is not None:
+        report = analyze(uploaded_file)
