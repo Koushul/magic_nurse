@@ -54,17 +54,17 @@ def convert_bytes_to_df(bytes_data):
 
     return df
 
-def analyze(bytes_data):
+def analyze(df):
     # df = Dbf5(dbf_path).to_dataframe()
-    df = convert_bytes_to_df(bytes_data)
+    df['REMARKS'] = df['REMARKS'].astype(str)
     report = {}
     report['site'] = df['HTH_CENTRE'][0]
     report['total_screened'] = len(df)
-    BP_retakes = df['BP_2ND'].notna().sum()
-    report['BP_retakes'] = BP_retakes
-    report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
+    # BP_retakes = df['BP2P'].notna().sum()
+    # report['BP_retakes'] = BP_retakes
+    # report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
     report['BMI_stats'] = df.apply(lambda x: bmi_check(x['BMI']), axis=1).value_counts().to_dict()
-    report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
+    # report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
     report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['sex_stats'] = df['SEX'].replace({2: 'Female', 1: 'Male'}).value_counts().to_dict()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
@@ -86,7 +86,16 @@ if __name__ == "__main__":
     for files in uploaded_files:
         bytes_data = files.getvalue()
         df = convert_bytes_to_df(bytes_data)
-        st.dataframe(df)
+        with st.expander(f'View File {files.name}'):
+            st.dataframe(df)
+        
+        report = analyze(df)
+        
+        st.write(report)
+
+
+ 
+        
         
         st.write('-----')
         
