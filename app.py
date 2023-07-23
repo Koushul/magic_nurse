@@ -76,8 +76,12 @@ def analyze(bytes_data):
 
 
 if __name__ == "__main__":
+    st.set_page_config(layout="wide")
     st.header('Magic Data Analyzer')
+    
     uploaded_files = st.file_uploader("Choose a file", accept_multiple_files=True)
+    
+
     
     for files in uploaded_files:
         bytes_data = files.getvalue()
