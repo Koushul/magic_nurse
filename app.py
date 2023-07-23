@@ -24,12 +24,6 @@ def bmi_check(BMI):
     elif BMI > 30:
         return 'obese'
 
-def waist_check(sex, waist):
-    if sex == 2 and waist > 80:
-        return 'Abnormal_waist_female'
-    if sex == 1 and waist > 90:
-        return 'Abnormal_waist_male'
-
 def vision_check(vision_values):
     if '6/12' in vision_values.values:
         return True
@@ -42,6 +36,12 @@ def ecg_check(remark):
         return 'Refused'
     else:
         return 'Normal'
+
+def waist_check(sex, waist):
+    if sex == 2 and waist > 80:
+        return 'Abnormal_waist_female'
+    if sex == 1 and waist > 90:
+        return 'Abnormal_waist_male'
 
 def convert_bytes_to_df(bytes_data):
     # Write bytes to a .dbf file
@@ -60,13 +60,13 @@ def analyze(df):
     report = {}
     report['site'] = df['HTH_CENTRE'][0]
     report['total_screened'] = len(df)
-    # BP_retakes = df['BP2P'].notna().sum()
-    # report['BP_retakes'] = BP_retakes
-    # report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
-    report['BMI_stats'] = df.apply(lambda x: bmi_check(x['BMI']), axis=1).value_counts().to_dict()
-    # report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
-    report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['sex_stats'] = df['SEX'].replace({2: 'Female', 1: 'Male'}).value_counts().to_dict()
+    BP_retakes = df['BP2P'].notna().sum()
+    report['BP_retakes'] = BP_retakes
+    report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
+    report['BMI_stats'] = df.apply(lambda x: bmi_check(x['BMI']), axis=1).value_counts().to_dict()
+    report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
+    report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
     report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'HBP' in x).sum()
     report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
