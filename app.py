@@ -61,7 +61,7 @@ def analyze(df):
     report['site'] = df['HTH_CENTRE'][0]
     report['total_screened'] = len(df)
     report['sex_stats'] = df['SEX'].replace({2: 'Female', 1: 'Male'}).value_counts().to_dict()
-    BP_retakes = df['BP2P'].notna().sum()
+    BP_retakes = df['BP_2ND'].notna().sum()
     report['BP_retakes'] = BP_retakes
     report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
     report['BMI_stats'] = df.apply(lambda x: bmi_check(x['BMI']), axis=1).value_counts().to_dict()
