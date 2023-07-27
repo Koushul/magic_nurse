@@ -17,11 +17,11 @@ def bp_check(bp_value_str):
         pass
 
 def bmi_check(BMI):
-    if BMI < 18.5:
+    if BMI < 18.50:
         return 'underweight'
-    elif BMI > 24.9 and BMI < 30:
+    elif BMI > 24.90 and BMI < 30.0:
         return 'overweight'
-    elif BMI > 30:
+    elif BMI > 30.0:
         return 'obese'
 
 def vision_check(vision_values):
