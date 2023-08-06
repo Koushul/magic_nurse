@@ -68,7 +68,7 @@ def analyze(df):
     report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
     report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
-    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'HBP' in x).sum()
+    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'HBP', 'CHD' in x).sum()
     report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
 
     return report
