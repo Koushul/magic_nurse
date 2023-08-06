@@ -3,6 +3,7 @@ from simpledbf import Dbf5
 import pandas as pd
 import numpy as np
 import warnings
+import re
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
@@ -77,7 +78,7 @@ def analyze(df):
     # report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['Vision_stats'] = df[df['REMARKS'].str.contains('EYE')]['REMARKS'].apply(vision_check).value_counts().to_dict()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
-    report['follow_ups'] = df['PREV_RX'].astype(str).str.contains('HBP|CHD|CARDIAC').sum()
+    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: bool(re.search(r'HBP|CHD|CARDIAC', x))).sum()
     # report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'CHD' in x).sum()
     report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
 
