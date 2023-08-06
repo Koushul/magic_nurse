@@ -31,7 +31,7 @@ def vision_check(remark):
 # def vision_check(vision_values):
 #     if '6/12' in vision_values.values:
 #         return True
-    
+
 
 def ecg_check(remark):
 
@@ -77,7 +77,7 @@ def analyze(df):
     # report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
     report['Vision_stats'] = df[df['REMARKS'].str.contains('EYE')]['REMARKS'].apply(vision_check).value_counts().to_dict()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
-    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x, y, z: 'HBP' in x or 'CHD' in x or 'CARDIAC' in x).sum()
+    report['follow_ups'] = df['PREV_RX'].astype(str).str.contains('HBP|CHD|CARDIAC').sum()
     # report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'CHD' in x).sum()
     report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
 
