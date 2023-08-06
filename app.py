@@ -24,18 +24,25 @@ def bmi_check(BMI):
     elif BMI > 30.0:
         return 'obese'
 
-def vision_check(vision_values):
-    if '6/12' in vision_values.values:
-        return True
+
+def vision_check(remark):
+    if 'EYE' in remark:
+        return 'Abnormal vision'
+# def vision_check(vision_values):
+#     if '6/12' in vision_values.values:
+#         return True
     
 
 def ecg_check(remark):
-    if 'ECG>REF' in remark or 'ECG REF' in remark or 'REF ECG' in remark:
-        return 'Referred'
-    elif 'REFUSE ECG' in remark.upper() or 'REFUSE>ECG' in remark.upper():
-        return 'Refused'
-    else:
-        return 'Normal'
+
+    if 'ECG' in remark:
+        return 'Total'
+    # if 'ECG>REF' in remark or 'ECG REF' in remark or 'REF ECG' in remark:
+    #     return 'Referred'
+    # elif 'REFUSE ECG' in remark.upper() or 'REFUSE>ECG' in remark.upper():
+    #     return 'Refused'
+    # else:
+    #     return 'Normal'
 
 def waist_check(sex, waist):
     if sex == 2 and waist > 80:
@@ -66,9 +73,11 @@ def analyze(df):
     report['BP_retake_stats'] = df.apply(lambda x: bp_check(x['BP_2ND']), axis=1).value_counts().to_dict()
     report['BMI_stats'] = df.apply(lambda x: bmi_check(x['BMI']), axis=1).value_counts().to_dict()
     report['waist_stats'] = df.apply(lambda x: waist_check(x['SEX'], x['WAIST']), axis=1).value_counts().to_dict()
-    report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
+    report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
+    # report['abnormal_vision'] = df[['VISION_RT', 'VISION_LT']].apply(vision_check, axis = 1).sum()
+    report['Vision_stats'] = df[df['REMARKS'].str.contains('EYE')]['REMARKS'].apply(vision_check).value_counts().to_dict()
     report['HBA1C_refused'] = df[df['HAEMOCUE'] >= 7]['REMARKS'].str.upper().str.contains('REFUSE').sum()
-    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'HBP' in x).sum()
+    report['follow_ups'] = df['PREV_RX'].astype(str).apply(lambda x: 'HBP','CHD','CARDIAC' in x).sum()
     report['ECG_stats'] = df[df['REMARKS'].str.contains('ECG')]['REMARKS'].apply(ecg_check).value_counts().to_dict()
 
     return report
