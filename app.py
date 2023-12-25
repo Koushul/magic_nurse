@@ -22,7 +22,7 @@ def bmi_check(BMI):
         return 'underweight'
     elif BMI > 24.90 and BMI < 30.0:
         return 'overweight'
-    elif BMI > 30.0:
+    elif BMI >= 30.0:
         return 'obese'
 
 
